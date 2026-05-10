@@ -1,14 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router-dom";
+import { CartContext } from "../context/CartContext";
 import pizzaDefault from "../assets/pizza-default.jpg";
 
 const Pizza = () => {
+  const { id } = useParams();
+  const { addToCart } = useContext(CartContext);
   const [pizza, setPizza] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/pizzas/p001")
+    fetch(`http://localhost:5000/api/pizzas/${id}`)
       .then((res) => res.json())
       .then((data) => setPizza(data));
-  }, []);
+  }, [id]);
 
   if (!pizza) return <p className="text-white text-center mt-5">Cargando...</p>;
 
@@ -74,9 +78,12 @@ const Pizza = () => {
             {pizza.name}
           </h2>
 
-          <p style={{ marginBottom: "24px", lineHeight: "1.6" }}>{pizza.desc}</p>
+          <p style={{ marginBottom: "24px", lineHeight: "1.6" }}>
+            {pizza.desc}
+          </p>
 
           <h5 style={{ marginBottom: "12px" }}>Ingredientes:</h5>
+
           <ul style={{ paddingLeft: "20px", marginBottom: "24px" }}>
             {pizza.ingredients.map((ingredient, index) => (
               <li key={index} style={{ marginBottom: "6px" }}>
@@ -89,7 +96,12 @@ const Pizza = () => {
             Precio: ${pizza.price.toLocaleString("es-CL")}
           </h4>
 
-          <button className="btn btn-dark">Añadir al carrito</button>
+          <button
+            className="btn btn-dark"
+            onClick={() => addToCart(pizza)}
+          >
+            Añadir al carrito
+          </button>
         </div>
       </div>
     </div>
